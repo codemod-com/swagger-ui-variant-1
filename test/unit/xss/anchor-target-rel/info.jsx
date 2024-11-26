@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import Info, { InfoUrl } from "core/components/info"
 import Contact from "core/components/contact"
@@ -32,13 +32,13 @@ describe("<Info/> Anchor Target Safety", function(){
 				url: "http://google.com/"
 			})
 		}
-		let wrapper = render(<Info {...props} />)
-		const anchor = wrapper.find("a")
+		const { getByRole } = render(<Info {...props} />)
+		const anchor = getByRole("link")
 
-		expect(anchor.html()).toEqual("http://google.com/")
-		expect(anchor.attr("target")).toEqual("_blank")
-		expect(anchor.attr("rel") || "").toMatch("noopener")
-		expect(anchor.attr("rel") || "").toMatch("noreferrer")
+		expect(anchor).toHaveAttribute("href", "http://google.com/")
+		expect(anchor).toHaveAttribute("target", "_blank")
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
 	})
 
 	it("renders Contact links with safe `rel` attributes", function () {
@@ -51,13 +51,13 @@ describe("<Info/> Anchor Target Safety", function(){
 				}
 			})
 		}
-		let wrapper = render(<Info {...props} />)
-		const anchor = wrapper.find("a")
+		const { getByRole } = render(<Info {...props} />)
+		const anchor = getByRole("link")
 
-		expect(anchor.attr("href")).toEqual("http://google.com/")
-		expect(anchor.attr("target")).toEqual("_blank")
-		expect(anchor.attr("rel") || "").toMatch("noopener")
-		expect(anchor.attr("rel") || "").toMatch("noreferrer")
+		expect(anchor).toHaveAttribute("href", "http://google.com/")
+		expect(anchor).toHaveAttribute("target", "_blank")
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
 	})
 
 	it("renders License links with safe `rel` attributes", function () {
@@ -69,13 +69,13 @@ describe("<Info/> Anchor Target Safety", function(){
 				}
 			})
 		}
-		let wrapper = render(<Info {...props} />)
-		const anchor = wrapper.find("a")
+		const { getByRole } = render(<Info {...props} />)
+		const anchor = getByRole("link")
 
-		expect(anchor.attr("href")).toEqual("http://mit.edu/")
-		expect(anchor.attr("target")).toEqual("_blank")
-		expect(anchor.attr("rel") || "").toMatch("noopener")
-		expect(anchor.attr("rel") || "").toMatch("noreferrer")
+		expect(anchor).toHaveAttribute("href", "http://mit.edu/")
+		expect(anchor).toHaveAttribute("target", "_blank")
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
 	})
 
 	it("renders termsOfService links with safe `rel` attributes", function () {
@@ -85,13 +85,13 @@ describe("<Info/> Anchor Target Safety", function(){
 				termsOfService: "http://smartbear.com/"
 			})
 		}
-		let wrapper = render(<Info {...props} />)
-		const anchor = wrapper.find("a")
+		const { getByRole } = render(<Info {...props} />)
+		const anchor = getByRole("link")
 
-		expect(anchor.attr("href")).toEqual("http://smartbear.com/")
-		expect(anchor.attr("target")).toEqual("_blank")
-		expect(anchor.attr("rel") || "").toMatch("noopener")
-		expect(anchor.attr("rel") || "").toMatch("noreferrer")
+		expect(anchor).toHaveAttribute("href", "http://smartbear.com/")
+		expect(anchor).toHaveAttribute("target", "_blank")
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
 	})
 
 	it("renders definition URL links with safe `rel` attributes", function () {
@@ -99,12 +99,12 @@ describe("<Info/> Anchor Target Safety", function(){
 			...baseProps,
 			url: "http://petstore.swagger.io/v2/petstore.json"
 		}
-		let wrapper = render(<Info {...props} />)
-		const anchor = wrapper.find("a")
+		const { getByRole } = render(<Info {...props} />)
+		const anchor = getByRole("link")
 
-		expect(anchor.attr("href")).toEqual("http://petstore.swagger.io/v2/petstore.json")
-		expect(anchor.attr("target")).toEqual("_blank")
-		expect(anchor.attr("rel") || "").toMatch("noopener")
-		expect(anchor.attr("rel") || "").toMatch("noreferrer")
+		expect(anchor).toHaveAttribute("href", "http://petstore.swagger.io/v2/petstore.json")
+		expect(anchor).toHaveAttribute("target", "_blank")
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+		expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
 	})
 })

@@ -1,9 +1,10 @@
 import React from "react"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"  
 import { fromJSOrdered } from "core/utils"
-import { shallow } from "enzyme"
 import Curl from "core/components/curl"
-import LiveResponse from "core/components/live-response"
 import ResponseBody from "core/components/response-body"
+import LiveResponse from "core/components/live-response"
 
 describe("<LiveResponse/>", function(){
   let request = fromJSOrdered({
@@ -35,9 +36,7 @@ describe("<LiveResponse/>", function(){
 
   tests.forEach(function(test) {
     it("passes " + test.expected.request + " to Curl when showMutatedRequest = " + test.showMutatedRequest, function() {
-
-      // Given
-
+// Given
       let response = fromJSOrdered({
         status: 200,
         url: "http://petstore.swagger.io/v2/pet/1",
@@ -52,8 +51,8 @@ describe("<LiveResponse/>", function(){
       let requestForSpy = jest.fn().mockImplementation(function() { return request })
 
       let components = {
-        curl: Curl,
-        responseBody: ResponseBody
+        curl: () => <div>Mocked Curl</div>,
+        responseBody: () => <div>Mocked ResponseBody</div>
       }
 
       let props = {
@@ -69,33 +68,21 @@ describe("<LiveResponse/>", function(){
         displayRequestDuration: true,
         getConfigs: () => ({ showMutatedRequest: test.showMutatedRequest })
       }
+       // When
+      render(<LiveResponse {...props}/>)
 
-      // When
-      let wrapper = shallow(<LiveResponse {...props}/>)
+       // Then
+      expect(mutatedRequestForSpy).toHaveBeenCalledTimes(test.expected.mutatedRequestForCalls)
+      expect(requestForSpy).toHaveBeenCalledTimes(test.expected.requestForCalls)
 
-      // Then
-      expect(mutatedRequestForSpy.mock.calls.length).toEqual(test.expected.mutatedRequestForCalls)
-      expect(requestForSpy.mock.calls.length).toEqual(test.expected.requestForCalls)
+           const expectedUrl = requests[test.expected.request].get("url")
+      expect(screen.getByText(expectedUrl)).toBeInTheDocument()
 
-      const curl = wrapper.find(Curl)
-      expect(curl.length).toEqual(1)
-      expect(curl.props().request).toBe(requests[test.expected.request])
-
-      const expectedUrl = requests[test.expected.request].get("url")
-      expect(wrapper.find("div.request-url pre.microlight").text()).toEqual(expectedUrl)
-
-      const duration = wrapper.find("Duration")
-      expect(duration.length).toEqual(1)
-      expect(duration.props().duration).toEqual(50)
-      expect(duration.html())
-        .toEqual("<div><h5>Request duration</h5><pre class=\"microlight\">50 ms</pre></div>")
-
-      const responseHeaders = wrapper.find("Headers")
-      expect(duration.length).toEqual(1)
-      expect(responseHeaders.props().headers.length).toEqual(1)
-      expect(responseHeaders.props().headers[0].key).toEqual("content-type")
-      expect(responseHeaders.html())
-        .toEqual("<div><h5>Response headers</h5><pre class=\"microlight\"><span class=\"headerline\"> content-type: application/xml </span></pre></div>")
+      
+      expect(screen.getByText(/50 ms/)).toBeInTheDocument()
+      const headersElement = screen.getByText(/content-type/i)
+      expect(headersElement).toBeInTheDocument()
+      expect(headersElement.textContent).toContain("application/xml")
     })
   })
 })

@@ -1,5 +1,5 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import ModelExample from "core/plugins/json-schema-5/components/model-example"
 import ModelComponent from "core/plugins/json-schema-5/components/model-wrapper"
 
@@ -20,7 +20,8 @@ describe("<ModelExample/>", function(){
 
   beforeEach(() => {
     components = {
-      ModelWrapper: ModelComponent
+      ModelWrapper: ModelComponent,
+      Model: ({expandDepth}) => <div data-expand-depth={expandDepth}></div>,
     }
 
     props = {
@@ -43,20 +44,20 @@ describe("<ModelExample/>", function(){
 
   it("renders model and example tabs", function(){
     // When
-    let wrapper = shallow(<ModelExample {...props}/>)
+    let wrapper = render(<ModelExample {...props}/>)
 
     // Then should render tabs
-    expect(wrapper.find("div > ul.tab").length).toEqual(1)
+    expect(wrapper.getByRole("tablist")).toBeInTheDocument()
 
-    let tabs = wrapper.find("div > ul.tab").children()
+    let tabs = wrapper.getAllByRole("tab")
     expect(tabs.length).toEqual(2)
     tabs.forEach((node) => {
-      expect(node.length).toEqual(1)
-      expect(node.name()).toEqual("li")
-      expect(node.hasClass("tabitem")).toEqual(true)
+      expect(node).toBeInTheDocument()
+      expect(node.tagName).toEqual("BUTTON")
+      expect(node).toHaveClass("tablinks")
     })
-    expect(tabs.at(0).text()).toEqual("Example Value")
-    expect(tabs.at(1).text()).toEqual("Model")
+    expect(tabs[0]).toHaveTextContent("Example Value")
+    expect(tabs[1]).toHaveTextContent("Model")
   })
 
   exampleSelectedTestInputs.forEach(function(testInputs) {
@@ -67,18 +68,18 @@ describe("<ModelExample/>", function(){
         defaultModelRendering: testInputs.defaultModelRendering,
         defaultModelExpandDepth: 1
       })
-      let wrapper = shallow(<ModelExample {...props}/>)
+      let wrapper = render(<ModelExample {...props}/>)
 
       // Then
-      let tabs = wrapper.find("div > ul.tab").children()
+      let tabs = wrapper.getAllByRole("tab")
 
-      let exampleTab = tabs.at(0)
-      expect(exampleTab.hasClass("active")).toEqual(true)
-      let modelTab = tabs.at(1)
-      expect(modelTab.hasClass("active")).toEqual(false)
+      let exampleTab = tabs[0]
+      expect(exampleTab.parentElement).toHaveClass("active")
+      let modelTab = tabs[1]
+      expect(modelTab.parentElement).not.toHaveClass("active")
 
-      expect(wrapper.find("div > div").length).toEqual(1)
-      expect(wrapper.find("div > div").text()).toEqual(props.example)
+      expect(wrapper.getByRole("tabpanel")).toBeInTheDocument()
+      expect(wrapper.getByRole("tabpanel")).toHaveTextContent(props.example)
     })
   })
 
@@ -90,18 +91,18 @@ describe("<ModelExample/>", function(){
         defaultModelRendering: testInputs.defaultModelRendering,
         defaultModelExpandDepth: 1
       })
-      let wrapper = shallow(<ModelExample {...props}/>)
+      let wrapper = render(<ModelExample {...props}/>)
 
       // Then
-      let tabs = wrapper.find("div > ul.tab").children()
+      let tabs = wrapper.getAllByRole("tab")
 
-      let exampleTab = tabs.at(0)
-      expect(exampleTab.hasClass("active")).toEqual(false)
-      let modelTab = tabs.at(1)
-      expect(modelTab.hasClass("active")).toEqual(true)
+      let exampleTab = tabs[0]
+      expect(exampleTab.parentElement).not.toHaveClass("active")
+      let modelTab = tabs[1]
+      expect(modelTab.parentElement).toHaveClass("active")
 
-      expect(wrapper.find("div > div").length).toEqual(1)
-      expect(wrapper.find("div > div").find(ModelComponent).props().expandDepth).toBe(1)
+      expect(wrapper.getByRole("tabpanel")).toBeInTheDocument()
+      expect(wrapper.getByRole("tabpanel").querySelector("[data-expand-depth='1']")).toBeInTheDocument()
     })
   })
 
@@ -113,10 +114,10 @@ describe("<ModelExample/>", function(){
         defaultModelRendering: "model",
         defaultModelExpandDepth: expandDepth
       })
-      let wrapper = shallow(<ModelExample {...props}/>)
+      let wrapper = render(<ModelExample {...props}/>)
 
       // Then
-      expect(wrapper.find("div > div").find(ModelComponent).props().expandDepth).toBe(expandDepth)
+      expect(wrapper.getByRole("tabpanel").querySelector("[data-expand-depth='0']")).toBeInTheDocument()
   })
 
 })

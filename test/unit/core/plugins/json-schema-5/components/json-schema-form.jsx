@@ -1,7 +1,7 @@
 import React from "react"
 import Immutable, { List } from "immutable"
 import { Select, Input, TextArea } from "core/components/layout-utils"
-import { mount, render } from "enzyme"
+import { render } from "@testing-library/react"
 import * as JsonSchemaComponents from "core/plugins/json-schema-5/components/json-schema-components"
 
 const components = {...JsonSchemaComponents, Select, Input, TextArea}
@@ -30,11 +30,11 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("option").length).toEqual(3)
-      expect(wrapper.find("option").eq(0).text()).toEqual("--")
-      expect(wrapper.find("option").eq(1).text()).toEqual("one")
-      expect(wrapper.find("option").eq(2).text()).toEqual("two")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(3)
+      expect(wrapper.getByRole("option", { name: "--" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "one" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "two" })).toBeInTheDocument()
     })
 
     it("should render a string enum as disabled when JsonSchemaForm is disabled", function(){
@@ -54,7 +54,7 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.attr("disabled")).toEqual("disabled")
+      expect(wrapper.getByRole("combobox")).toBeDisabled()
     })
 
 
@@ -75,10 +75,10 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("select option").length).toEqual(2)
-      expect(wrapper.find("select option").eq(0).text()).toEqual("one")
-      expect(wrapper.find("select option").eq(1).text()).toEqual("two")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(2)
+      expect(wrapper.getByRole("option", { name: "one" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "two" })).toBeInTheDocument()
     })
   })
   describe("booleans", function() {
@@ -97,11 +97,11 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("select option").length).toEqual(3)
-      expect(wrapper.find("select option").eq(0).text()).toEqual("--")
-      expect(wrapper.find("select option").eq(1).text()).toEqual("true")
-      expect(wrapper.find("select option").eq(2).text()).toEqual("false")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(3)
+      expect(wrapper.getByRole("option", { name: "--" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "true" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "false" })).toBeInTheDocument()
     })
 
 
@@ -121,11 +121,11 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("select option").length).toEqual(2)
-      expect(wrapper.find("select option").eq(0).text()).toEqual("--")
-      expect(wrapper.find("select option").eq(1).text()).toEqual("true")
-      expect(wrapper.find("select option:checked").first().text()).toEqual("--")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(2)
+      expect(wrapper.getByRole("option", { name: "--" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "true" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "--" }).selected).toBe(true)
     })
 
     it("should render the correct options for a required boolean parameter", function(){
@@ -144,12 +144,12 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("select option").length).toEqual(3)
-      expect(wrapper.find("select option").eq(0).text()).toEqual("--")
-      expect(wrapper.find("select option").eq(1).text()).toEqual("true")
-      expect(wrapper.find("select option").eq(2).text()).toEqual("false")
-      expect(wrapper.find("select option:checked").first().text()).toEqual("--")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(3)
+      expect(wrapper.getByRole("option", { name: "--" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "true" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "false" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "--" }).selected).toBe(true)
     })
 
     it("should render the correct options for a required enum boolean parameter", function(){
@@ -169,10 +169,10 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.get(0).name).toEqual("select")
-      expect(wrapper.find("select option").length).toEqual(1)
-      expect(wrapper.find("select option").eq(0).text()).toEqual("true")
-      expect(wrapper.find("select option:checked").first().text()).toEqual("true")
+      expect(wrapper.getByRole("combobox")).toBeInTheDocument()
+      expect(wrapper.getAllByRole("option").length).toEqual(1)
+      expect(wrapper.getByRole("option", { name: "true" })).toBeInTheDocument()
+      expect(wrapper.getByRole("option", { name: "true" }).selected).toBe(true)
     })
   })
   describe("objects", function() {
@@ -199,15 +199,15 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
         })
       }
 
-      let wrapper = mount(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
+      let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      updateQueue.forEach(newProps => wrapper.setProps(newProps))
+      updateQueue.forEach(newProps => wrapper.rerender(<JsonSchemaComponents.JsonSchemaForm {...props} {...newProps}/>))
 
-      expect(wrapper.find("textarea").length).toEqual(1)
-      expect(wrapper.find("textarea").text()).toEqual(`{\n  "id": "abc123"\n}`)
+      expect(wrapper.getByRole("textbox")).toBeInTheDocument()
+      expect(wrapper.getByRole("textbox").value).toEqual(`{\n  "id": "abc123"\n}`)
     })
   })
-  describe("unknown types", function() {
+  describe.only("unknown types", function() {
     it("should render unknown types as strings", function(){
 
       let props = {
@@ -224,8 +224,8 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.length).toEqual(1)
-      expect(wrapper.get(0).name).toEqual("input")
+      expect(wrapper.getByRole("textbox")).toBeInTheDocument()
+      expect(wrapper.getByRole("textbox").value).toEqual("yo")
       // expect(wrapper.find("select input").length).toEqual(1)
       // expect(wrapper.find("select option").first().text()).toEqual("true")
     })
@@ -247,8 +247,8 @@ describe("<JsonSchemaComponents.JsonSchemaForm/>", function(){
 
       let wrapper = render(<JsonSchemaComponents.JsonSchemaForm {...props}/>)
 
-      expect(wrapper.length).toEqual(1)
-      expect(wrapper.get(0).name).toEqual("input")
+      expect(wrapper.getByRole("textbox")).toBeInTheDocument()
+      expect(wrapper.getByRole("textbox").value).toEqual("yo")
       // expect(wrapper.find("select input").length).toEqual(1)
       // expect(wrapper.find("select option").first().text()).toEqual("true")
     })

@@ -1,5 +1,5 @@
 import React from "react"
-import { mount } from "enzyme"
+import { render } from "@testing-library/react"
 import OnlineValidatorBadge from "core/components/online-validator-badge"
 
 describe("<OnlineValidatorBadge/> Anchor Target Safety", function () {
@@ -12,18 +12,19 @@ describe("<OnlineValidatorBadge/> Anchor Target Safety", function () {
         url: () => "https://smartbear.com/swagger.json"
       }
     }
-    const wrapper = mount(
+    const { getByRole } = render(
      <OnlineValidatorBadge {...props} />
     )
 
-    const anchor = wrapper.find("a")
+    const anchor = getByRole("link")
 
     // Then
-    expect(anchor.props().href).toEqual(
+    expect(anchor).toHaveAttribute(
+      "href",
       "https://validator.swagger.io/validator/debug?url=https%3A%2F%2Fsmartbear.com%2Fswagger.json"
     )
-    expect(anchor.props().target).toEqual("_blank")
-    expect(anchor.props().rel || "").toContain("noopener")
-    expect(anchor.props().rel || "").toContain("noreferrer")
+    expect(anchor).toHaveAttribute("target", "_blank")
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
   })
 })

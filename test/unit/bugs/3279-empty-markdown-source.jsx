@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import Markdown from "core/components/providers/markdown"
 
 describe("UI-3279: Empty Markdown inputs causing bare `undefined` in output", function(){
@@ -10,7 +10,7 @@ describe("UI-3279: Empty Markdown inputs causing bare `undefined` in output", fu
 
     let el = render(<Markdown {...props}/>)
 
-    expect(el.text()).toEqual("")
+    expect(el.queryByText(/./)).toBeNull()
   })
 
   it("should return no text for `undefined` as source input", function(){
@@ -20,7 +20,7 @@ describe("UI-3279: Empty Markdown inputs causing bare `undefined` in output", fu
 
     let el = render(<Markdown {...props}/>)
 
-    expect(el.text()).toEqual("")
+    expect(el.queryByText(/./)).toBeNull()
   })
 
   it("should return no text for empty string as source input", function(){
@@ -30,6 +30,6 @@ describe("UI-3279: Empty Markdown inputs causing bare `undefined` in output", fu
 
     let el = render(<Markdown {...props}/>)
 
-    expect(el.text()).toEqual("")
+    expect(el.queryByText(/./)).toBeNull()
   })
 })

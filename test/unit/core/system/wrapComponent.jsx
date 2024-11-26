@@ -1,6 +1,6 @@
 import React from "react"
 
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import System from "core/system"
 
 describe("wrapComponents", () => {
@@ -31,12 +31,10 @@ describe("wrapComponents", () => {
       let Component = system.getSystem().getComponents("wow")
       const wrapper = render(<Component name="Normal" />)
 
-      expect(wrapper.get(0).name).toEqual("container")
-
-      const children = wrapper.children()
-      expect(children.length).toEqual(2)
-      expect(children.eq(0).text()).toEqual("Normal component")
-      expect(children.eq(1).text()).toEqual("Wrapped component")
+      expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER")
+      expect(wrapper.container.firstChild.children.length).toEqual(2)
+      expect(wrapper.container.firstChild.children[0].textContent).toEqual("Normal component")
+      expect(wrapper.container.firstChild.children[1].textContent).toEqual("Wrapped component")
     })
 
     it("with React classes", function () {
@@ -75,12 +73,10 @@ describe("wrapComponents", () => {
       let Component = system.getSystem().getComponents("wow")
       const wrapper = render(<Component name="Normal" />)
 
-      expect(wrapper.get(0).name).toEqual("container")
-
-      const children = wrapper.children()
-      expect(children.length).toEqual(2)
-      expect(children.eq(0).text()).toEqual("Normal component")
-      expect(children.eq(1).text()).toEqual("Wrapped component")
+      expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER")
+      expect(wrapper.container.firstChild.children.length).toEqual(2)
+      expect(wrapper.container.firstChild.children[0].textContent).toEqual("Normal component")
+      expect(wrapper.container.firstChild.children[1].textContent).toEqual("Wrapped component")
     })
   })
 
@@ -126,12 +122,12 @@ describe("wrapComponents", () => {
     let Component = mySystem.getSystem().getComponents("wow")
     const wrapper = render(<Component name="Normal" />)
 
-    expect(wrapper.get(0).name).toEqual("container")
+    expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER")
 
-    const children = wrapper.children()
+    const children = wrapper.container.firstChild.children
     expect(children.length).toEqual(2)
-    expect(children.eq(0).text()).toEqual("Original component")
-    expect(children.eq(1).text()).toEqual("WOW much data")
+    expect(children[0].textContent).toEqual("Original component")
+    expect(children[1].textContent).toEqual("WOW much data")
   })
 
   it("should wrap correctly when registering more plugins", function () {
@@ -179,12 +175,12 @@ describe("wrapComponents", () => {
     let Component = mySystem.getSystem().getComponents("wow")
     const wrapper = render(<Component name="Normal" />)
 
-    expect(wrapper.get(0).name).toEqual("container")
+    expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER")
 
-    const children = wrapper.children()
+    const children = wrapper.container.firstChild.children
     expect(children.length).toEqual(2)
-    expect(children.eq(0).text()).toEqual("Original component")
-    expect(children.eq(1).text()).toEqual("WOW much data")
+    expect(children[0].textContent).toEqual("Original component")
+    expect(children[1].textContent).toEqual("WOW much data")
   })
 
   it("should wrap component correctly when performing subsequent plugin registering targeting the same component", function () {
@@ -234,19 +230,19 @@ describe("wrapComponents", () => {
     let Component = mySystem.getSystem().getComponents("wow")
     const wrapper = render(<Component name="Normal" />)
 
-    expect(wrapper.get(0).name).toEqual("container2")
+    expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER2")
 
-    const children2 = wrapper.children()
+    const children2 = wrapper.container.firstChild.children
     expect(children2.length).toEqual(2)
-    expect(children2[0].name).toEqual("div")
-    expect(children2.eq(0).text()).toEqual("Injected before")
-    expect(children2[1].name).toEqual("container1")
+    expect(children2[0].nodeName).toEqual("DIV")
+    expect(children2[0].textContent).toEqual("Injected before")
+    expect(children2[1].nodeName).toEqual("CONTAINER1")
 
-    const children1 = children2.children()
+    const children1 = children2[1].children
     expect(children1.length).toEqual(2)
-    expect(children1.eq(0).text()).toEqual("Original component")
-    expect(children1[0].name).toEqual("div")
-    expect(children1.eq(1).text()).toEqual("Injected after")
+    expect(children1[0].textContent).toEqual("Original component")
+    expect(children1[0].nodeName).toEqual("DIV")
+    expect(children1[1].textContent).toEqual("Injected after")
   })
 
   it("should wrap correctly when building a system twice", function () {
@@ -294,11 +290,11 @@ describe("wrapComponents", () => {
     let Component = secondSystem.getSystem().getComponents("wow")
     const wrapper = render(<Component name="Normal" />)
 
-    expect(wrapper.get(0).name).toEqual("container")
+    expect(wrapper.container.firstChild.nodeName).toEqual("CONTAINER")
 
-    const children = wrapper.children()
+    const children = wrapper.container.firstChild.children
     expect(children.length).toEqual(2)
-    expect(children.eq(0).text()).toEqual("Original component")
-    expect(children.eq(1).text()).toEqual("WOW much data")
+    expect(children[0].textContent).toEqual("Original component")
+    expect(children[1].textContent).toEqual("WOW much data")
   })
 })

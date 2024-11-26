@@ -1,5 +1,5 @@
+import { render } from "@testing-library/react"
 import React from "react"
-import { mount } from "enzyme"
 import { fromJS } from "immutable"
 import InfoContainer from "core/containers/info"
 
@@ -30,10 +30,12 @@ describe("<InfoContainer/>", function () {
     props.specSelectors.info = function () {return fromJS(["info1", "info2"])}
 
     // When
-    let wrapper = mount(<InfoContainer {...props}/>)
+    let {
+      container
+    } = render(<InfoContainer {...props}/>)
 
     // Then
-    const renderedInfo = wrapper.find("span.mocked-info")
+    const renderedInfo = container.querySelectorAll("span.mocked-info")
     expect(renderedInfo.length).toEqual(1)
   })
 
@@ -45,10 +47,12 @@ describe("<InfoContainer/>", function () {
     props.specSelectors.info = function () {return fromJS([])}
 
     // When
-    let wrapper = mount(<InfoContainer {...props}/>)
+    let {
+      container
+    } = render(<InfoContainer {...props}/>)
 
     // Then
-    const renderedInfo = wrapper.find("span.mocked-info")
+    const renderedInfo = container.querySelectorAll("span.mocked-info")
     expect(renderedInfo.length).toEqual(0)
   })
 
@@ -58,10 +62,12 @@ describe("<InfoContainer/>", function () {
     let props = {...mockedProps}
 
     // When
-    let wrapper = mount(<InfoContainer {...props}/>)
+    let {
+      container
+    } = render(<InfoContainer {...props}/>)
 
     // Then
-    const renderedInfo = wrapper.find("span.mocked-info")
+    const renderedInfo = container.querySelectorAll("span.mocked-info")
     expect(renderedInfo.length).toEqual(0)
   })
 })

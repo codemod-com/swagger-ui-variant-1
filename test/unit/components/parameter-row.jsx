@@ -1,9 +1,9 @@
+import { render } from "@testing-library/react"
 /**
  * @prettier
  */
 import React from "react"
 import { List, fromJS } from "immutable"
-import { render } from "enzyme"
 
 import ParameterRow from "core/components/parameter-row"
 import {
@@ -56,10 +56,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: false })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("string($uuid)")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("string($uuid)")
   })
 
   it("Can render Swagger 2 parameter type without format", () => {
@@ -71,10 +73,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: false })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("string")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("string")
   })
 
   it("Can render Swagger 2 parameter type boolean without format", () => {
@@ -86,10 +90,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: false })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("boolean")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("boolean")
   })
 
   it("Can render OAS3 parameter type with format", () => {
@@ -104,10 +110,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: true })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("string($uuid)")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("string($uuid)")
   })
 
   it("Can render OAS3 parameter type without format", () => {
@@ -121,10 +129,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: true })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("string")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("string")
   })
 
   it("Can render OAS3 parameter type boolean without format", () => {
@@ -138,10 +148,12 @@ describe("<ParameterRow/>", () => {
     })
 
     const props = createProps({ param, isOAS3: true })
-    const wrapper = render(<ParameterRow {...props} />)
+    const {
+      container
+    } = render(<ParameterRow {...props} />)
 
-    expect(wrapper.find(".parameter__type").length).toEqual(1)
-    expect(wrapper.find(".parameter__type").text()).toEqual("boolean")
+    expect(container.querySelectorAll(".parameter__type").length).toEqual(1)
+    expect(container.querySelectorAll(".parameter__type")[0].textContent).toEqual("boolean")
   })
 })
 

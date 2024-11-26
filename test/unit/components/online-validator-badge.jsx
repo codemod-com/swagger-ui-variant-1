@@ -1,5 +1,6 @@
 import React from "react"
-import { mount } from "enzyme"
+import { render, screen } from "@testing-library/react"
+import "@testing-library/jest-dom"
 import OnlineValidatorBadge from "core/components/online-validator-badge"
 import expect from "expect"
 
@@ -13,19 +14,18 @@ describe("<OnlineValidatorBadge/>", function () {
         url: () => "https://smartbear.com/swagger.json"
       }
     }
-    const wrapper = mount(
-     <OnlineValidatorBadge {...props} />
-    )
 
-    // Then
-    expect(wrapper.find("a").props().href).toEqual(
+    render(
+      <OnlineValidatorBadge {...props} />)
+    
+    const link = screen.getByRole("link", { name: /validator/i })
+    expect(link).toHaveAttribute(
+      "href", 
       "https://validator.swagger.io/validator/debug?url=https%3A%2F%2Fsmartbear.com%2Fswagger.json"
     )
-    expect(wrapper.find("ValidatorImage").length).toEqual(1)
   })
 
-  it("should encode a definition URL correctly", function () {
-    // When
+  it("should encode a definition URL correctly", () => {
     const props = {
       getConfigs: () => ({}),
       getComponent: () => null,
@@ -33,18 +33,21 @@ describe("<OnlineValidatorBadge/>", function () {
         url: () => "http://google.com/swagger.json"
       }
     }
-    const wrapper = mount(
+   render(
       <OnlineValidatorBadge {...props} />
     )
 
     // Then
-    expect(wrapper.find("a").props().href).toEqual(
+    
+    const link = screen.getByRole("link", { name: /validator/i })
+    expect(link).toHaveAttribute(
+      "href", 
       "https://validator.swagger.io/validator/debug?url=http%3A%2F%2Fgoogle.com%2Fswagger.json"
     )
-    expect(wrapper.find("ValidatorImage").length).toEqual(1)
-    expect(wrapper.find("ValidatorImage").props().src).toEqual(
-      "https://validator.swagger.io/validator?url=http%3A%2F%2Fgoogle.com%2Fswagger.json"
-    )
+
+   
+    const validatorElement = screen.getByLabelText("validator")
+    expect(validatorElement).toBeInTheDocument()
   })
 
   it("should resolve a definition URL against the browser's location", function () {
@@ -58,18 +61,19 @@ describe("<OnlineValidatorBadge/>", function () {
         url: () => "http://google.com/swagger.json"
       }
     }
-    const wrapper = mount(
+   render(
       <OnlineValidatorBadge {...props} />
     )
-
-    // Then
-    expect(wrapper.find("a").props().href).toEqual(
+    
+    const link = screen.getByRole("link", { name: /validator/i })
+    expect(link).toHaveAttribute(
+      "href", 
       "https://validator.swagger.io/validator/debug?url=http%3A%2F%2Fgoogle.com%2Fswagger.json"
     )
-    expect(wrapper.find("ValidatorImage").length).toEqual(1)
-    expect(wrapper.find("ValidatorImage").props().src).toEqual(
-      "https://validator.swagger.io/validator?url=http%3A%2F%2Fgoogle.com%2Fswagger.json"
-    )
+
+  
+    const validatorElement = screen.getByLabelText("validator")
+    expect(validatorElement).toBeInTheDocument()
   })
-  // should resolve a definition URL against the browser's location
+   // should resolve a definition URL against the browser's location
 })

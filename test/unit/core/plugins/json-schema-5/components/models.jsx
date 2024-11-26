@@ -1,17 +1,20 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS, Map } from "immutable"
 import Models from "core/plugins/json-schema-5/components/models"
-import ModelCollapse from "core/plugins/json-schema-5/components/model-collapse"
-import ModelComponent from "core/plugins/json-schema-5/components/model-wrapper"
 
 describe("<Models/>", function(){
-  const dummyComponent = () => null
+  const makeDummyComponent = (name) => 
+    ({children, expandDepth}) => <div data-testid={name} data-expand-depth={expandDepth}>{children}</div>
   // Given
   let components = {
-    Collapse: ModelCollapse,
-    ModelWrapper: ModelComponent,
-    JumpToPath: dummyComponent,
+    Collapse: makeDummyComponent("Collapse"),
+    ModelWrapper: makeDummyComponent("ModelWrapper"),
+    JumpToPath: makeDummyComponent("JumpToPath"),
+    Model: makeDummyComponent("Model"),
+    ModelCollapse: makeDummyComponent("ModelCollapse"),
+    ArrowUpIcon: makeDummyComponent("ArrowUpIcon"),
+    ArrowDownIcon: makeDummyComponent("ArrowDownIcon")
   }
   let props = {
     getComponent: (c) => {
@@ -31,7 +34,9 @@ describe("<Models/>", function(){
     layoutSelectors: {
       isShown: jest.fn()
     },
-    layoutActions: {},
+    layoutActions: {
+      readyToScroll: jest.fn()
+    },
     getConfigs: () => ({
       docExpansion: "list",
       defaultModelsExpandDepth: 0
@@ -41,13 +46,13 @@ describe("<Models/>", function(){
 
   it("passes defaultModelsExpandDepth to ModelWrapper", function(){
     // When
-    let wrapper = shallow(<Models {...props}/>)
+    const { getAllByTestId } = render(<Models {...props}/>)
 
     // Then should render tabs
-    expect(wrapper.find("ModelCollapse").length).toEqual(1)
-    expect(wrapper.find("ModelWrapper").length).toBeGreaterThan(0)
-    wrapper.find("ModelComponent").forEach((modelWrapper) => {
-      expect(modelWrapper.props().expandDepth).toBe(0)
+    expect(getAllByTestId("Collapse").length).toEqual(1)
+    expect(getAllByTestId("ModelWrapper").length).toBeGreaterThan(0)
+    getAllByTestId("ModelWrapper").forEach((modelWrapper) => {
+      expect(modelWrapper.getAttribute("data-expand-depth")).toBe("0")
     })
   })
 

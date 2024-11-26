@@ -76,6 +76,7 @@ export default class OperationTag extends React.Component {
           id={isShownKey.map(v => escapeDeepLinkPath(v)).join("-")}
           data-tag={tag}
           data-is-open={showTag}
+          data-testid="opblock-tag"
         >
           <DeepLink
             enabled={deepLinking}

@@ -1,10 +1,8 @@
 import { JSDOM } from "jsdom"
-import Enzyme from "enzyme"
-const { default: Adapter } = require("@cfaester/enzyme-adapter-react-18")
+import "@testing-library/jest-dom"
 
 import win from "../../src/core/window"
 
-Enzyme.configure({ adapter: new Adapter() })
 
 function copyProps(src, target) {
   const props = Object.getOwnPropertyNames(src)
@@ -37,5 +35,3 @@ function setUpDomEnvironment() {
 }
 
 setUpDomEnvironment()
-
-// configure({ adapter: new Adapter() }) // enzyme@3
