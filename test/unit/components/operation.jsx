@@ -1,5 +1,5 @@
+import { render } from "@testing-library/react"
 import React from "react"
-import { shallow } from "enzyme"
 import Operation from "core/components/operation"
 
 describe("<Operation/>", function(){
@@ -17,14 +17,16 @@ describe("<Operation/>", function(){
       toggleCollapse: jest.fn()
     }
 
-    let wrapper = shallow(<Operation {...props}/>)
+    let {
+      container
+    } = render(<Operation {...props}/>)
 
-    expect(wrapper.find(".opblock").length).toEqual(1)
-    expect(wrapper.find(".opblock-summary-method").text()).toEqual("GET")
-    expect(wrapper.find(".opblock-summary-path").text().trim()).toEqual("/one")
-    expect(wrapper.find("[isOpened]").prop("isOpened")).toEqual(true)
+    expect(container.querySelectorAll(".opblock").length).toEqual(1)
+    expect(container.querySelectorAll(".opblock-summary-method").textContent).toEqual("GET")
+    expect(container.querySelectorAll(".opblock-summary-path").textContent.trim()).toEqual("/one")
+    expect(container.querySelectorAll("[isOpened]").prop("isOpened")).toEqual(true)
 
-    wrapper.find(".opblock-summary").simulate("click")
+    container.querySelectorAll(".opblock-summary").simulate("click")
     expect(props.toggleCollapse).toHaveBeenCalled()
   })
 })

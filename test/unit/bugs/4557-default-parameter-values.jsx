@@ -3,7 +3,7 @@
  */
 import React from "react"
 import { List, fromJS } from "immutable"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 
 import ParameterRow from "core/components/parameter-row"
 import {

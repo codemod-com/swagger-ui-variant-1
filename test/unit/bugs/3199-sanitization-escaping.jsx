@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import Markdown from "core/components/providers/markdown"
 
 describe("UI-3199: Sanitized Markdown causing code examples to be double escaped", function(){
@@ -13,9 +13,10 @@ describe("UI-3199: Sanitized Markdown causing code examples to be double escaped
       source: str
     }
 
-    let el = render(<Markdown {...props}/>)
+    const { container } = render(<Markdown {...props} />)
+    const codeElement = container.querySelector("code")
 
-    expect(el.find("code").first().text()).toEqual("{\"abc\": \"def\"}\n")
-    expect(el.find("code").first().html()).toEqual("{\"abc\": \"def\"}\n")
+    expect(codeElement.textContent).toEqual("{\"abc\": \"def\"}\n")
+    expect(codeElement.innerHTML).toEqual("{\"abc\": \"def\"}\n")
   })
 })

@@ -1,10 +1,19 @@
+import { render ,screen} from "@testing-library/react"
+import "@testing-library/jest-dom"
 import React from "react"
-import { shallow } from "enzyme"
 import ResponseBody from "core/components/response-body"
 
 describe("<ResponseBody />", function () {
+
+  // Mock component
+  const HighlightCode = ({ children, canCopy }) => (
+    <div data-testid="highlight-code" data-cancopy={canCopy}>
+      {children}
+    </div>
+  )
+
   const components = {
-    HighlightCode: () => null
+    HighlightCode
   }
   const props = {
     getComponent: c => components[c],
@@ -13,35 +22,41 @@ describe("<ResponseBody />", function () {
   it("renders ResponseBody as 'application/json'", function () {
     props.contentType = "application/json"
     props.content = "{\"key\": \"a test value\"}"
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.find("HighlightCode").length).toEqual(1)
+    render(<ResponseBody {...props} />)
+    expect(screen.getByTestId("highlight-code")).toBeInTheDocument()
   })
 
   it("renders ResponseBody as 'text/html'", function () {
     props.contentType = "application/json"
     props.content = "<b>Result</b>"
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.find("HighlightCode").length).toEqual(1)
+    render(<ResponseBody {...props} />)
+    expect(screen.getByTestId("highlight-code")).toBeInTheDocument()
   })
 
   it("renders ResponseBody as 'image/svg'", function () {
     props.contentType = "image/svg"
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.find("HighlightCode").length).toEqual(0)
+    const {
+      container
+    } = render(<ResponseBody {...props} />)
+    expect(container.querySelectorAll("HighlightCode").length).toEqual(0)
   })
 
   it("should render a copyable highlightCodeComponent for text types", function () {
     props.contentType = "text/plain"
     props.content = "test text"
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.find("HighlightCode[canCopy]").length).toEqual(1)
+    render(<ResponseBody {...props} />)
+    const copyableCode = screen.getByTestId("highlight-code")
+    expect(copyableCode).toBeInTheDocument()
+    expect(copyableCode).toHaveAttribute("data-cancopy")
   })
 
   it("should render Download file link for non-empty Blob response", function () {
     props.contentType = "application/octet-stream"
     props.content = new Blob(["\"test\""], { type: props.contentType })
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.text()).toMatch(/Download file/)
+    const {
+      container
+    } = render(<ResponseBody {...props} />)
+    expect(container.textContent).toMatch(/Download file/)
   })
 
   it("should render Download file link for non-empty text response", function () {
@@ -50,14 +65,18 @@ describe("<ResponseBody />", function () {
     props.headers = {
       "Content-Disposition": "attachment; filename=\"test.txt\"",
     }
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.text()).toMatch(/Download file/)
+    const {
+      container
+    } = render(<ResponseBody {...props} />)
+    expect(container.textContent).toMatch(/Download file/)
   })
 
   it("should not render Download file link for empty response", function () {
     props.contentType = "application/octet-stream"
     props.content = new Blob()
-    const wrapper = shallow(<ResponseBody {...props} />)
-    expect(wrapper.text()).not.toMatch(/Download file/)
+    const {
+      container
+    } = render(<ResponseBody {...props} />)
+    expect(container.textContent).not.toMatch(/Download file/)
   })
 })

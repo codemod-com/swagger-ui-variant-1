@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react"
 import { fromJS } from "immutable"
-import { render, mount } from "enzyme"
+import { render } from "@testing-library/react"
 import { Provider } from "react-redux"
 
 import System from "core/system"
@@ -479,8 +479,8 @@ describe("bound system", function(){
 
       // When
       let Component = system.getSystem().getComponent("test")
-      const renderedComponent = render(<Component name="Test" />)
-      expect(renderedComponent.text()).toEqual("Test component")
+      const { getByText } = render(<Component name="Test" />)
+      expect(getByText("Test component")).toBeInTheDocument()
     })
 
     it("allows container components to provide their own `mapStateToProps` function", function() {
@@ -525,14 +525,14 @@ describe("bound system", function(){
 
       // When
       let Component = system.getSystem().getComponent("ContainerComponent", true)
-      const renderedComponent = render(
+      const { getByText } = render(
         <Provider store={system.getStore()}>
           <Component fromOwnProps="and this came from my own props" />
         </Provider>
       )
 
       // Then
-      expect(renderedComponent.text()).toEqual("This came from mapStateToProps and this came from the system and this came from my own props")
+      expect(getByText("This came from mapStateToProps and this came from the system and this came from my own props")).toBeInTheDocument()
     })
 
     it("gives the system and own props as props to a container's `mapStateToProps` function", function() {
@@ -578,14 +578,14 @@ describe("bound system", function(){
 
       // When
       let Component = system.getSystem().getComponent("ContainerComponent", true)
-      const renderedComponent = render(
+      const { getByText } = render(
         <Provider store={system.getStore()}>
           <Component fromOwnProps="and this came from my own props" />
         </Provider>
       )
 
       // Then
-      expect(renderedComponent.text()).toEqual("This came from mapStateToProps and this came from the system and this came from my own props")
+      expect(getByText("This came from mapStateToProps and this came from the system and this came from my own props")).toBeInTheDocument()
     })
   })
 

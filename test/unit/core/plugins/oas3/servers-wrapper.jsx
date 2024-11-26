@@ -1,10 +1,12 @@
-
 import React from "react"
-import { mount } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import ServersContainer from "core/plugins/oas3/components/servers-container"
 import Servers from "core/plugins/oas3/components/servers"
 import { Col } from "core/components/layout-utils"
+import { jest } from "@jest/globals"
+
+jest.mock("core/plugins/oas3/components/servers", () => () => <div data-testid="servers"></div>)
 
 describe("<ServersContainer/>", function(){
 
@@ -38,11 +40,10 @@ describe("<ServersContainer/>", function(){
     props.oas3Selectors.selectedServer = function() {return "http://server1.com"}
 
     // When
-    let wrapper = mount(<ServersContainer {...props}/>)
+    const { queryByTestId } = render(<ServersContainer {...props}/>)
 
     // Then
-    const renderedServers = wrapper.find(Servers)
-    expect(renderedServers.length).toEqual(1)
+    expect(queryByTestId("servers")).toBeInTheDocument()
   })
 
   it("does not render Servers inside ServersContainer if servers are empty", function(){
@@ -53,11 +54,10 @@ describe("<ServersContainer/>", function(){
     props.specSelectors.servers = function() {return fromJS([])}
 
     // When
-    let wrapper = mount(<ServersContainer {...props}/>)
+    const { queryByTestId } = render(<ServersContainer {...props}/>)
 
     // Then
-    const renderedServers = wrapper.find(Servers)
-    expect(renderedServers.length).toEqual(0)
+    expect(queryByTestId("servers")).not.toBeInTheDocument()
   })
 
   it("does not render Servers inside ServersContainer if servers are undefined", function(){
@@ -66,10 +66,9 @@ describe("<ServersContainer/>", function(){
     let props = {...mockedProps}
 
     // When
-    let wrapper = mount(<ServersContainer {...props}/>)
+    const { queryByTestId } = render(<ServersContainer {...props}/>)
 
     // Then
-    const renderedServers = wrapper.find(Servers)
-    expect(renderedServers.length).toEqual(0)
+    expect(queryByTestId("servers")).not.toBeInTheDocument()
   })
 })
