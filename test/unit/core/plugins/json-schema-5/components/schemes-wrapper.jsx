@@ -1,9 +1,12 @@
 import React from "react"
-import { mount } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import SchemesContainer from "core/plugins/json-schema-5/containers/schemes"
 import Schemes from "core/plugins/json-schema-5/components/schemes"
 import { Col } from "core/components/layout-utils"
+import { jest } from "@jest/globals"
+
+jest.mock("core/plugins/json-schema-5/components/schemes", () => () => <div data-testid="schemes"></div>)
 
 describe("<SchemesContainer/>", function(){
 
@@ -23,22 +26,6 @@ describe("<SchemesContainer/>", function(){
     },
     getComponent: c => components[c]
   }
-  const twoSecurityDefinitions = {
-    "petstore_auth": {
-      "type": "oauth2",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-      "flow": "implicit",
-      "scopes": {
-        "write:pets": "modify pets in your account",
-        "read:pets": "read your pets"
-      }
-    },
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
-    }
-  }
 
   it("renders Schemes inside SchemesContainer if schemes are provided", function(){
 
@@ -49,11 +36,10 @@ describe("<SchemesContainer/>", function(){
     props.specSelectors.schemes = function() {return fromJS(["http", "https"])}
 
     // When
-    let wrapper = mount(<SchemesContainer {...props}/>)
+    const { queryByTestId } = render(<SchemesContainer {...props}/>)
 
     // Then
-    const renderedSchemes = wrapper.find(Schemes)
-    expect(renderedSchemes.length).toEqual(1)
+    expect(queryByTestId("schemes")).toBeInTheDocument()
   })
 
   it("does not render Schemes inside SchemeWrapper if empty array of schemes is provided", function(){
@@ -64,11 +50,10 @@ describe("<SchemesContainer/>", function(){
     props.specSelectors.schemes = function() {return fromJS([])}
 
     // When
-    let wrapper = mount(<SchemesContainer {...props}/>)
+    const { queryByTestId } = render(<SchemesContainer {...props}/>)
 
     // Then
-    const renderedSchemes = wrapper.find(Schemes)
-    expect(renderedSchemes.length).toEqual(0)
+    expect(queryByTestId("schemes")).not.toBeInTheDocument()
   })
 
   it("does not render Schemes inside SchemeWrapper if provided schemes are undefined", function(){
@@ -79,10 +64,9 @@ describe("<SchemesContainer/>", function(){
     props.specSelectors.schemes = function() {return undefined}
 
     // When
-    let wrapper = mount(<SchemesContainer {...props}/>)
+    const { queryByTestId } = render(<SchemesContainer {...props}/>)
 
     // Then
-    const renderedSchemes = wrapper.find(Schemes)
-    expect(renderedSchemes.length).toEqual(0)
+    expect(queryByTestId("schemes")).not.toBeInTheDocument()
   })
 })

@@ -2,7 +2,7 @@
  * @prettier
  */
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS, List } from "immutable"
 
 import Response from "core/components/response"
@@ -17,6 +17,10 @@ import makeGetJsonSampleSchema from "core/plugins/json-schema-5-samples/fn/get-j
 import makeGetYamlSampleSchema from "core/plugins/json-schema-5-samples/fn/get-yaml-sample-schema"
 import makeGetXmlSampleSchema from "core/plugins/json-schema-5-samples/fn/get-xml-sample-schema"
 
+jest.mock("core/plugins/json-schema-5/components/model-example", () => jest.fn(() => null))
+
+const MockModelExample = jest.requireMock("core/plugins/json-schema-5/components/model-example")
+
 describe("<Response />", function () {
   const dummyComponent = () => null
   const components = {
@@ -26,6 +30,14 @@ describe("<Response />", function () {
     Markdown: dummyComponent,
     operationLink: dummyComponent,
     contentType: dummyComponent,
+    ResponseExtension: dummyComponent,
+    Headers: dummyComponent,
+    HighlightCode: dummyComponent,
+    ModelExample: dummyComponent,
+    OperationLink: dummyComponent,
+    ContentType: dummyComponent,
+    ExamplesSelect: dummyComponent,
+    Example: dummyComponent,
   }
   const getSystem = () => ({
     getComponent: (c) => components[c],
@@ -73,14 +85,15 @@ describe("<Response />", function () {
   }
 
   it("renders the model-example schema properties in order", function () {
-    const wrapper = shallow(<Response {...props} />)
-    const renderedModelExample = wrapper.find(ModelExample)
+    MockModelExample.mockImplementation(
+      ({ schema }) => <div data-testid="model-example" data-schema-props={Object.keys(schema.toJS().properties).join(",")} />
+    )
+
+    const wrapper = render(<Response {...props} />)
+    const renderedModelExample = wrapper.queryAllByTestId("model-example")
     expect(renderedModelExample.length).toEqual(1)
 
     // Assert the schema's properties have maintained their order
-    const modelExampleSchemaProperties = renderedModelExample
-      .props()
-      .schema.toJS().properties
-    expect(Object.keys(modelExampleSchemaProperties)).toEqual(["c", "b", "a"])
+    expect(renderedModelExample[0].getAttribute("data-schema-props")).toEqual("c,b,a")
   })
 })

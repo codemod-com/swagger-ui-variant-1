@@ -1,8 +1,20 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import PrimitiveModel from "core/plugins/json-schema-5/components/primitive-model"
 import ModelCollapse from "core/plugins/json-schema-5/components/model-collapse"
+
+jest.mock(
+  "core/plugins/json-schema-5/components/model-collapse",
+  () => ({ children, title }) => (
+    <div data-testid="model-collapse">
+      <div data-testid="model-collapse-title">
+        {title}
+      </div>
+      {children}
+    </div>
+  )
+)
 
 describe("<PrimitiveModel/>", function () {
     const dummyComponent = () => null
@@ -28,10 +40,11 @@ describe("<PrimitiveModel/>", function () {
 
     it("renders the schema's title", function () {
       // When
-      const wrapper = shallow(<PrimitiveModel {...props} />)
-      const modelTitleEl = wrapper.find("ModelCollapse").prop("title").props.children.props.children
-
-      expect(modelTitleEl).toEqual("Custom model title")
+      const { getByTestId } = render(<PrimitiveModel {...props} />)
+      const renderedModelCollapse = getByTestId("model-collapse")
+      const renderedModelCollapseTitle = getByTestId("model-collapse-title")
+      expect(renderedModelCollapse).toContainElement(renderedModelCollapseTitle)
+      expect(renderedModelCollapseTitle).toHaveTextContent("Custom model title")
     })
 
     it("falls back to the passed-in `name` prop for the title", function () {
@@ -39,17 +52,17 @@ describe("<PrimitiveModel/>", function () {
       props.schema = fromJS({
         type: "string"
       })
-      const wrapper = shallow(<PrimitiveModel {...props} />)
-      const modelTitleEl = wrapper.find("ModelCollapse").prop("title").props.children.props.children
-
-      // Then
-      expect(modelTitleEl).toEqual("Name from props")
-
+      const { getByTestId } = render(<PrimitiveModel {...props} />)
+      const renderedModelCollapse = getByTestId("model-collapse")
+      const renderedModelCollapseTitle = getByTestId("model-collapse-title")
+      expect(renderedModelCollapse).toContainElement(renderedModelCollapseTitle)
+      expect(renderedModelCollapseTitle).toHaveTextContent("Name from props")
     })
 
     it("renders a collapsible header", function(){
-      const wrapper = shallow(<PrimitiveModel {...props}/>)
-      const renderedModelCollapse = wrapper.find(ModelCollapse)
-      expect(renderedModelCollapse.length).toEqual(1)
+      const { getByTestId } = render(<PrimitiveModel {...props}/>)
+      const renderedModelCollapse = getByTestId("model-collapse")
+
+      expect(renderedModelCollapse).toBeInTheDocument()
     })
 })

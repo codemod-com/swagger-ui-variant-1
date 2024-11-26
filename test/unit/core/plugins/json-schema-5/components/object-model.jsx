@@ -1,5 +1,5 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import { List } from "immutable"
 import ObjectModel from "core/plugins/json-schema-5/components/object-model"
 // import ModelExample from "core/components/model-example"
@@ -8,6 +8,12 @@ import Model from "core/plugins/json-schema-5/components/model"
 import ModelCollapse from "core/plugins/json-schema-5/components/model-collapse"
 import Property from "core/components/property"
 // import { inferSchema } from "core/plugins/samples/fn"
+
+jest.mock("core/plugins/json-schema-5/components/model-collapse", () => ({children}) => <div data-testid="model-collapse">{children}</div>)
+jest.mock("core/plugins/json-schema-5/components/model", () =>
+  ({ schema }) => <div data-testid="model" data-name={schema.get("name")}></div>
+)
+jest.mock("core/components/property", () => ({propKey, propVal}) => <div data-testid="property" data-propkey={propKey} data-propval={propVal}></div>)
 
 describe("<ObjectModel />", function() {
     const dummyComponent = () => null
@@ -63,47 +69,47 @@ describe("<ObjectModel />", function() {
     }
 
     it("renders a collapsible header", function(){
-      const wrapper = shallow(<ObjectModel {...props}/>)
-      const renderedModelCollapse = wrapper.find(ModelCollapse)
-      expect(renderedModelCollapse.length).toEqual(1)
+      const { queryAllByTestId } = render(<ObjectModel {...props}/>)
+      expect(queryAllByTestId("model-collapse").length).toEqual(1)
     })
 
     it("renders the object properties in order", function() {
-        const wrapper = shallow(<ObjectModel {...props}/>)
-        const renderedModel = wrapper.find(Model)
+        const { queryAllByTestId } = render(<ObjectModel {...props}/>)
+        const renderedModel = queryAllByTestId("model")
         expect(renderedModel.length).toEqual(3)
-        expect(renderedModel.get(0).props.schema.get("name")).toEqual("c")
-        expect(renderedModel.get(1).props.schema.get("name")).toEqual("b")
-        expect(renderedModel.get(2).props.schema.get("name")).toEqual("a")
+        expect(renderedModel[0].getAttribute("data-name")).toEqual("c")
+        expect(renderedModel[1].getAttribute("data-name")).toEqual("b")
+        expect(renderedModel[2].getAttribute("data-name")).toEqual("a")
+
     })
 
     it("doesn't render `nullable` for model when it absent", function() {
-      const wrapper = shallow(<ObjectModel {...props}/>)
-      const renderProperties = wrapper.find(Property)
-      expect(renderProperties.length).toEqual(0)
+      const { queryAllByTestId } = render(<ObjectModel {...props}/>)
+      const renderedProperties = queryAllByTestId("property")
+      expect(renderedProperties.length).toEqual(0)
     })
 
     it("renders `nullable` for model", function() {
-      const wrapper = shallow(<ObjectModel {...propsNullable}/>)
-      const renderProperties = wrapper.find(Property)
-      expect(renderProperties.length).toEqual(1)
-      expect(renderProperties.get(0).props.propKey).toEqual("nullable")
-      expect(renderProperties.get(0).props.propVal).toEqual(true)
+      const { queryAllByTestId } = render(<ObjectModel {...propsNullable}/>)
+      const renderedProperties = queryAllByTestId("property")
+      expect(renderedProperties.length).toEqual(1)
+      expect(renderedProperties[0].getAttribute("data-propkey")).toEqual("nullable")
+      expect(renderedProperties[0].getAttribute("data-propval")).toEqual("true")
     })
 
     it("doesn't render `minProperties` and `maxProperties` if they are absent", function() {
-      const wrapper = shallow(<ObjectModel {...props}/>)
-      const renderProperties = wrapper.find(Property)
-      expect(renderProperties.length).toEqual(0)
+      const { queryAllByTestId } = render(<ObjectModel {...props}/>)
+      const renderedProperties = queryAllByTestId("property")
+      expect(renderedProperties.length).toEqual(0)
     })
 
     it("renders `minProperties` and `maxProperties` if they are defined", function() {
-      const wrapper = shallow(<ObjectModel {...propsMinMaxProperties}/>)
-      const renderProperties = wrapper.find(Property)
+      const { queryAllByTestId } = render(<ObjectModel {...propsMinMaxProperties}/>)
+      const renderProperties = queryAllByTestId("property")
       expect(renderProperties.length).toEqual(2)
-      expect(renderProperties.get(0).props.propKey).toEqual("minProperties")
-      expect(renderProperties.get(0).props.propVal).toEqual(1)
-      expect(renderProperties.get(1).props.propKey).toEqual("maxProperties")
-      expect(renderProperties.get(1).props.propVal).toEqual(5)
+      expect(renderProperties[0].getAttribute("data-propkey")).toEqual("minProperties")
+      expect(renderProperties[0].getAttribute("data-propval")).toEqual("1")
+      expect(renderProperties[1].getAttribute("data-propkey")).toEqual("maxProperties")
+      expect(renderProperties[1].getAttribute("data-propval")).toEqual("5")
     })
 })

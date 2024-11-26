@@ -1,5 +1,5 @@
 import React from "react"
-import { shallow } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import Schemes from "core/plugins/json-schema-5/components/schemes"
 
@@ -23,7 +23,7 @@ describe("<Schemes/>", function(){
     }
 
     // When
-    let wrapper = shallow(<Schemes {...props}/>)
+    let wrapper = render(<Schemes {...props}/>)
 
     // Then currentScheme should default to first scheme in options list
     expect(props.specActions.setScheme).toHaveBeenCalledWith("http", "/test" , "get")
@@ -32,7 +32,7 @@ describe("<Schemes/>", function(){
     props.schemes = fromJS([
       "https"
     ])
-    wrapper.setProps(props)
+    wrapper.rerender(<Schemes {...props}/>)
 
     // Then currentScheme should default to first scheme in options list, again
     expect(props.specActions.setScheme).toHaveBeenCalledWith("https", "/test", "get")
@@ -55,13 +55,13 @@ describe("<Schemes/>", function(){
     }
 
     // When
-    let wrapper = shallow(<Schemes {...props}/>)
+    let wrapper = render(<Schemes {...props}/>)
 
     // Should be called initially, to set the global state
     expect(setSchemeSpy.mock.calls.length).toEqual(1)
 
     // After an update
-    wrapper.instance().UNSAFE_componentWillReceiveProps(props)
+    wrapper.rerender(<Schemes {...props}/>)
 
     // Should not be called again, since `currentScheme` is in schemes
     expect(setSchemeSpy.mock.calls.length).toEqual(1)
