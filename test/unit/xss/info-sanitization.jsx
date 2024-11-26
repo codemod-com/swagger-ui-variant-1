@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import { fromJS } from "immutable"
 import Info from "core/components/info"
 import Markdown from "core/components/providers/markdown"
@@ -21,12 +21,12 @@ describe("<Info/> Sanitization", function(){
 	}
 
 	it("renders sanitized .title content", function(){
-		let wrapper = render(<Info {...props}/>)
-		expect(wrapper.find(".title").html()).toEqual("Test Title **strong** &lt;script&gt;alert(1)&lt;/script&gt;<span></span>")
+		const { container } = render(<Info {...props}/>)
+		expect(container.querySelector(".title").innerHTML).toEqual("Test Title **strong** &lt;script&gt;alert(1)&lt;/script&gt;<span></span>")
 	})
 
 	it("renders sanitized .description content", function() {
-		let wrapper = render(<Info {...props}/>)
-		expect(wrapper.find(".description").html()).toEqual("<div class=\"markdown\"><p>Description <em>with</em> </p>\n</div>")
+		const { container } = render(<Info {...props}/>)
+		expect(container.querySelector(".description").innerHTML).toEqual("<div class=\"markdown\"><p>Description <em>with</em> </p>\n</div>")
 	})
 })

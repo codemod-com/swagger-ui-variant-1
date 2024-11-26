@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "enzyme"
+import { render } from "@testing-library/react"
 import { Link } from "core/components/layout-utils"
 
 describe("<Link/> Anchor Target Safety", function () {
@@ -16,11 +16,12 @@ describe("<Link/> Anchor Target Safety", function () {
       ...baseProps,
       href: "http://google.com/"
     }
-    let wrapper = render(<Link {...props} />)
+    const { getByRole } = render(<Link {...props} />)
+    const anchor = getByRole("link")
 
-    expect(wrapper.attr("href")).toEqual("http://google.com/")
-    expect(wrapper.attr("rel") || "").toMatch("noopener")
-    expect(wrapper.attr("rel") || "").toMatch("noreferrer")
+    expect(anchor).toHaveAttribute("href", "http://google.com/")
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
   })
 
   it("enforces `noreferrer` and `noopener` on target=_blank links", function () {
@@ -29,11 +30,12 @@ describe("<Link/> Anchor Target Safety", function () {
       href: "http://google.com/",
       target: "_blank"
     }
-    let wrapper = render(<Link {...props} />)
+    const { getByRole } = render(<Link {...props} />)
+    const anchor = getByRole("link")
 
-    expect(wrapper.attr("href")).toEqual("http://google.com/")
-    expect(wrapper.attr("target")).toEqual("_blank")
-    expect(wrapper.attr("rel") || "").toMatch("noopener")
-    expect(wrapper.attr("rel") || "").toMatch("noreferrer")
+    expect(anchor).toHaveAttribute("href", "http://google.com/")
+    expect(anchor).toHaveAttribute("target", "_blank")
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noopener"))
+    expect(anchor).toHaveAttribute("rel", expect.stringContaining("noreferrer"))
   })
 })
